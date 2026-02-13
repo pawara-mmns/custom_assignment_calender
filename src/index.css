@@ -327,6 +327,11 @@ body {
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
 }
 
+.select option {
+  background: #1e293b;
+  color: var(--text-primary);
+}
+
 .label {
   display: block;
   font-size: 0.8rem;
