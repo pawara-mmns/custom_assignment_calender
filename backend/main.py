@@ -1,0 +1,37 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
+
+from database import close_connection
+from routes.assignments import router as assignments_router
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    yield
+    # Shutdown
+    close_connection()
+
+
+app = FastAPI(
+    title="AssignCal API",
+    description="Backend API for the Assignment Calendar System",
+    version="1.0.0",
+    lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(assignments_router)
+
+
+@app.get("/api/health")
+def health():
+    return {"status": "ok"}
