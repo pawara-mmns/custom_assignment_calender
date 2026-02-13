@@ -79,7 +79,7 @@ export default function CalendarView() {
     };
 
     return (
-        <div className="animate-fade-in" style={{ flex: 1, padding: '1.5rem' }}>
+        <div className="calendar-container animate-fade-in">
             {/* Busy week indicator */}
             {busyWeeks.size > 0 && (
                 <div

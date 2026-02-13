@@ -1,7 +1,7 @@
 import FilterPanel from './FilterPanel';
 import RecentAdditions from './RecentAdditions';
 import { useAssignments } from '../context/AssignmentContext';
-import { HiPlus, HiCalendar } from 'react-icons/hi';
+import { HiPlus, HiCalendar, HiX } from 'react-icons/hi';
 
 interface SidebarProps {
     open: boolean;
@@ -13,91 +13,42 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
 
     return (
         <>
-            {open && (
-                <div
-                    className="sidebar-backdrop"
-                    onClick={onClose}
-                    style={{ display: 'none' }}
-                    ref={(el) => {
-                        if (el && window.innerWidth <= 768) {
-                            el.style.display = 'block';
-                        }
-                    }}
-                />
-            )}
+            {/* Backdrop — only visible on mobile when sidebar is open */}
+            <div
+                className={`sidebar-backdrop ${open ? 'active' : ''}`}
+                onClick={onClose}
+            />
+
             <aside className={`sidebar ${open ? 'open' : ''}`}>
                 {/* Logo / Brand */}
-                <div
-                    style={{
-                        padding: '1.25rem 1.25rem 0.75rem',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.75rem',
-                    }}
-                >
-                    <div
-                        style={{
-                            width: 36,
-                            height: 36,
-                            borderRadius: '10px',
-                            background: 'var(--gradient-you)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            boxShadow: 'var(--shadow-glow-you)',
-                        }}
-                    >
-                        <HiCalendar size={18} color="white" />
+                <div className="sidebar-header">
+                    <div className="sidebar-brand">
+                        <div className="sidebar-logo">
+                            <HiCalendar size={18} color="white" />
+                        </div>
+                        <div>
+                            <h1 className="sidebar-title">AssignCal</h1>
+                            <p className="sidebar-subtitle">Assignment Calendar</p>
+                        </div>
                     </div>
-                    <div>
-                        <h1
-                            style={{
-                                fontSize: '1rem',
-                                fontWeight: 800,
-                                letterSpacing: '-0.02em',
-                                background: 'linear-gradient(135deg, #a78bfa, #22d3ee)',
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
-                            }}
-                        >
-                            AssignCal
-                        </h1>
-                        <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>
-                            Assignment Calendar
-                        </p>
-                    </div>
+                    {/* Close button — only visible on mobile */}
+                    <button className="btn-icon sidebar-close" onClick={onClose}>
+                        <HiX size={18} />
+                    </button>
                 </div>
 
                 {/* Stats bar */}
-                <div
-                    style={{
-                        display: 'flex',
-                        gap: '0.5rem',
-                        padding: '0.75rem 1.25rem',
-                        margin: '0 1rem',
-                        borderRadius: '10px',
-                        background: 'rgba(255,255,255,0.02)',
-                        border: '1px solid var(--border-glass)',
-                    }}
-                >
-                    <div style={{ flex: 1, textAlign: 'center' }}>
-                        <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                            {assignments.length}
-                        </div>
-                        <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                            Total
-                        </div>
+                <div className="sidebar-stats">
+                    <div className="sidebar-stat">
+                        <div className="sidebar-stat-value">{assignments.length}</div>
+                        <div className="sidebar-stat-label">Total</div>
                     </div>
-                    <div
-                        style={{ width: 1, background: 'var(--border-glass)', alignSelf: 'stretch' }}
-                    />
-                    <div style={{ flex: 1, textAlign: 'center' }}>
-                        <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--accent-you-light)' }}>
+                    <div className="sidebar-stat-divider" />
+                    <div className="sidebar-stat">
+                        <div className="sidebar-stat-value" style={{ color: 'var(--accent-you-light)' }}>
                             {filteredAssignments.length}
                         </div>
-                        <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                            Showing
-                        </div>
+                        <div className="sidebar-stat-label">Showing</div>
                     </div>
                 </div>
 
@@ -105,7 +56,10 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
                 <div style={{ padding: '0.75rem 1.25rem' }}>
                     <button
                         className="btn btn-primary"
-                        onClick={() => openModal()}
+                        onClick={() => {
+                            openModal();
+                            onClose(); // close sidebar on mobile after opening modal
+                        }}
                         style={{ width: '100%', justifyContent: 'center', padding: '0.6rem' }}
                     >
                         <HiPlus size={16} />
@@ -114,16 +68,12 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
                 </div>
 
                 {/* Divider */}
-                <div style={{ height: 1, background: 'var(--border-glass)', margin: '0 1.25rem' }} />
+                <div className="sidebar-divider" />
 
-                {/* Filter Panel */}
-                <div style={{ flex: 1, overflowY: 'auto' }}>
+                {/* Scrollable content */}
+                <div className="sidebar-scroll">
                     <FilterPanel />
-
-                    {/* Divider */}
-                    <div style={{ height: 1, background: 'var(--border-glass)', margin: '0 1.25rem' }} />
-
-                    {/* Recent Additions */}
+                    <div className="sidebar-divider" />
                     <RecentAdditions />
                 </div>
             </aside>
